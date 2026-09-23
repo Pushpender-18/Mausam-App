@@ -8,8 +8,14 @@ import androidx.compose.material3.Surface
  * Main Home Screen displaying the Weather Dashboard.
  */
 @Composable
-fun HomeScreen() {
-    WeatherDashboardScreen()
+fun HomeScreen(
+    onNavigateToRainAlert: () -> Unit = {},
+    onNavigateToSettings: () -> Unit = {}
+) {
+    WeatherDashboardScreen(
+        onNavigateToRainAlert = onNavigateToRainAlert,
+        onNavigateToSettings = onNavigateToSettings
+    )
 }
 
 @Preview(showBackground = true)

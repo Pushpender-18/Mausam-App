@@ -22,6 +22,8 @@ import com.example.mausam.ui.LanguageScreen
 import com.example.mausam.ui.LocationScreen
 import com.example.mausam.ui.OnboardingScreen
 import com.example.mausam.ui.PersonalizedScreen
+import com.example.mausam.ui.RainAlertScreen
+import com.example.mausam.ui.SettingsScreen
 import com.example.mausam.utils.AppPreferences
 
 enum class AppScreen {
@@ -29,7 +31,9 @@ enum class AppScreen {
     LANGUAGE,
     LOCATION,
     PERSONALIZED,
-    HOME
+    HOME,
+    RAIN_ALERT,
+    SETTINGS
 }
 
 class MainActivity : ComponentActivity() {
@@ -123,7 +127,36 @@ fun MausamAppContent() {
         }
 
         AppScreen.HOME -> {
-            HomeScreen()
+            HomeScreen(
+                onNavigateToRainAlert = {
+                    currentScreen = AppScreen.RAIN_ALERT
+                },
+                onNavigateToSettings = {
+                    currentScreen = AppScreen.SETTINGS
+                }
+            )
+        }
+
+        AppScreen.RAIN_ALERT -> {
+            RainAlertScreen(
+                onBackClick = {
+                    currentScreen = AppScreen.HOME
+                }
+            )
+        }
+
+        AppScreen.SETTINGS -> {
+            SettingsScreen(
+                onBackClick = {
+                    currentScreen = AppScreen.HOME
+                },
+                onRainAlertClick = {
+                    currentScreen = AppScreen.RAIN_ALERT
+                },
+                onLocationPermissionClick = {
+                    currentScreen = AppScreen.LOCATION
+                }
+            )
         }
     }
 }
