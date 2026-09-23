@@ -21,12 +21,14 @@ import com.example.mausam.ui.HomeScreen
 import com.example.mausam.ui.LanguageScreen
 import com.example.mausam.ui.LocationScreen
 import com.example.mausam.ui.OnboardingScreen
+import com.example.mausam.ui.PersonalizedScreen
 import com.example.mausam.utils.AppPreferences
 
 enum class AppScreen {
     ONBOARDING,
     LANGUAGE,
     LOCATION,
+    PERSONALIZED,
     HOME
 }
 
@@ -69,8 +71,7 @@ fun MausamAppContent() {
         } else {
             AppPreferences.setLocationChoice(context, "DENIED")
         }
-        AppPreferences.setOnboardingCompleted(context, true)
-        currentScreen = AppScreen.HOME
+        currentScreen = AppScreen.PERSONALIZED
     }
 
     when (currentScreen) {
@@ -103,6 +104,18 @@ fun MausamAppContent() {
                 },
                 onChooseManuallyClick = {
                     AppPreferences.setLocationChoice(context, "MANUAL")
+                    currentScreen = AppScreen.PERSONALIZED
+                }
+            )
+        }
+
+        AppScreen.PERSONALIZED -> {
+            PersonalizedScreen(
+                onNextClick = {
+                    AppPreferences.setOnboardingCompleted(context, true)
+                    currentScreen = AppScreen.HOME
+                },
+                onSkipClick = {
                     AppPreferences.setOnboardingCompleted(context, true)
                     currentScreen = AppScreen.HOME
                 }

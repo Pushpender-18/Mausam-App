@@ -1,9 +1,9 @@
 package com.example.mausam.ui
 
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -28,19 +28,13 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
-import androidx.compose.animation.core.tween
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
-import kotlinx.coroutines.delay
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.graphicsLayer
-import androidx.compose.foundation.layout.offset
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
@@ -54,11 +48,11 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.mausam.utils.TimeUtils
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.delay
 
 /**
  * Redesigned Unified Onboarding Landing Page.
- * Features a static background (adapts to Day/Night based on system time)
+ * Features a clean static background artwork layer filling the screen naturally
  * with a 3-page HorizontalPager allowing swiping left/right across:
  * - State 0: Branding (Logo, Title, Subtitles, Tricolor Bar, Tagline)
  * - State 1: Weather Warnings (Central alert bell & alert chips)
@@ -95,7 +89,7 @@ fun OnboardingScreen(
     }
 
     Box(modifier = Modifier.fillMaxSize()) {
-        // Static Background Layer
+        // Clean Full-Screen Static Background Layer
         StaticOnboardingBackground(isDay = isDay, bgResId = bgResId)
 
         Column(
@@ -115,9 +109,6 @@ fun OnboardingScreen(
                 modifier = Modifier
                     .fillMaxWidth()
                     .weight(1f)
-                    .graphicsLayer {
-                        translationY = -size.height * 0.15f
-                    }
             ) { page ->
                 when (page) {
                     0 -> OnboardingBrandingState(isDay = isDay)
@@ -191,49 +182,24 @@ fun OnboardingScreen(
 }
 
 /**
- * Static Background layer for Onboarding page.
+ * Clean Full-Screen Static Background layer for Onboarding page.
  */
 @Composable
 private fun StaticOnboardingBackground(isDay: Boolean, bgResId: Int) {
-    val context = LocalContext.current
-    val waveResId = remember(context) {
-        context.resources.getIdentifier("bg_bottom_wave", "drawable", context.packageName)
-    }
-
-    val skyBlueColor = if (isDay) Color(0xFFD6EBF8) else Color(0xFF071329)
+    val skyColor = if (isDay) Color(0xFFD6EBF8) else Color(0xFF071329)
 
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(skyBlueColor)
+            .background(skyColor)
     ) {
-        // Landscape Background Layer (Shifted 25% upwards - up by additional 15%)
+        // Landscape Background Layer
         if (bgResId != 0) {
             Image(
                 painter = painterResource(id = bgResId),
                 contentDescription = "Static Landscape Background",
-                modifier = Modifier
-                    .fillMaxSize()
-                    .graphicsLayer {
-                        translationY = -size.height * 0.25f
-                    },
+                modifier = Modifier.fillMaxSize(),
                 contentScale = ContentScale.Crop
-            )
-        }
-
-        // Bottom Wavy Contour Topography Layer (Shifted 15% upwards)
-        if (waveResId != 0) {
-            Image(
-                painter = painterResource(id = waveResId),
-                contentDescription = "Bottom Wavy Topography",
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(240.dp)
-                    .align(Alignment.BottomCenter)
-                    .graphicsLayer {
-                        translationY = -size.height * 0.15f
-                    },
-                contentScale = ContentScale.FillBounds
             )
         }
     }
@@ -254,12 +220,12 @@ private fun OnboardingBrandingState(isDay: Boolean) {
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {
-        // IMD Emblem Logo (1.5x bigger: 210dp)
+        // IMD Emblem Logo
         if (logoResId != 0) {
             Image(
                 painter = painterResource(id = logoResId),
                 contentDescription = "IMD Emblem Logo",
-                modifier = Modifier.size(210.dp),
+                modifier = Modifier.size(200.dp),
                 contentScale = ContentScale.Fit
             )
         } else {
@@ -394,14 +360,14 @@ private fun OnboardingWarningsState(isDay: Boolean) {
         Box(
             modifier = Modifier
                 .fillMaxWidth()
-                .height(300.dp),
+                .height(290.dp),
             contentAlignment = Alignment.Center
         ) {
             if (dotLineResId != 0) {
                 Image(
                     painter = painterResource(id = dotLineResId),
                     contentDescription = "Orbital Dotted Line",
-                    modifier = Modifier.size(260.dp),
+                    modifier = Modifier.size(250.dp),
                     contentScale = ContentScale.Fit
                 )
             }
@@ -410,7 +376,7 @@ private fun OnboardingWarningsState(isDay: Boolean) {
                 Image(
                     painter = painterResource(id = bellResId),
                     contentDescription = "Weather Alert Bell",
-                    modifier = Modifier.size(110.dp),
+                    modifier = Modifier.size(105.dp),
                     contentScale = ContentScale.Fit
                 )
             } else {
@@ -425,12 +391,12 @@ private fun OnboardingWarningsState(isDay: Boolean) {
                 Box(
                     modifier = Modifier
                         .align(Alignment.TopStart)
-                        .padding(start = 12.dp, top = 20.dp)
+                        .padding(start = 12.dp, top = 16.dp)
                 ) {
                     Image(
                         painter = painterResource(id = heavyRainResId),
                         contentDescription = "Heavy Rainfall Alert",
-                        modifier = Modifier.height(48.dp),
+                        modifier = Modifier.height(46.dp),
                         contentScale = ContentScale.Fit
                     )
                 }
@@ -441,12 +407,12 @@ private fun OnboardingWarningsState(isDay: Boolean) {
                 Box(
                     modifier = Modifier
                         .align(Alignment.TopEnd)
-                        .padding(end = 12.dp, top = 20.dp)
+                        .padding(end = 12.dp, top = 16.dp)
                 ) {
                     Image(
                         painter = painterResource(id = heatwaveResId),
                         contentDescription = "Heatwave Alert",
-                        modifier = Modifier.height(48.dp),
+                        modifier = Modifier.height(46.dp),
                         contentScale = ContentScale.Fit
                     )
                 }
@@ -457,12 +423,12 @@ private fun OnboardingWarningsState(isDay: Boolean) {
                 Box(
                     modifier = Modifier
                         .align(Alignment.BottomStart)
-                        .padding(start = 16.dp, bottom = 20.dp)
+                        .padding(start = 16.dp, bottom = 16.dp)
                 ) {
                     Image(
                         painter = painterResource(id = cycloneResId),
                         contentDescription = "Cyclone Alert",
-                        modifier = Modifier.height(48.dp),
+                        modifier = Modifier.height(46.dp),
                         contentScale = ContentScale.Fit
                     )
                 }
@@ -473,27 +439,27 @@ private fun OnboardingWarningsState(isDay: Boolean) {
                 Box(
                     modifier = Modifier
                         .align(Alignment.BottomEnd)
-                        .padding(end = 16.dp, bottom = 20.dp)
+                        .padding(end = 16.dp, bottom = 16.dp)
                 ) {
                     Image(
                         painter = painterResource(id = strongWindsResId),
                         contentDescription = "Strong Winds Alert",
-                        modifier = Modifier.height(48.dp),
+                        modifier = Modifier.height(46.dp),
                         contentScale = ContentScale.Fit
                     )
                 }
             }
         }
 
-        Spacer(modifier = Modifier.height(20.dp))
+        Spacer(modifier = Modifier.height(16.dp))
 
-        // Titles & Subtitles
+        // Titles & Subtitles with High-Contrast Day/Night Adaptive Colors
         Text(
             text = buildAnnotatedString {
                 withStyle(style = SpanStyle(color = if (isDay) Color(0xFF0B2B52) else Color.White)) {
                     append("Weather\n")
                 }
-                withStyle(style = SpanStyle(color = if (isDay) Color(0xFF1E3A8A) else Color(0xFF93C5FD))) {
+                withStyle(style = SpanStyle(color = if (isDay) Color(0xFF1E3A8A) else Color(0xFF60A5FA))) {
                     append("warnings")
                 }
             },
@@ -538,7 +504,7 @@ private fun OnboardingWarningsState(isDay: Boolean) {
             text = "Get timely alerts for severe\nweather near you.",
             fontSize = 15.sp,
             fontWeight = FontWeight.Normal,
-            color = if (isDay) Color(0xFF4B5563) else Color(0xFFCBD5E1),
+            color = if (isDay) Color(0xFF4B5563) else Color(0xFFE2E8F0),
             textAlign = TextAlign.Center,
             lineHeight = 22.sp
         )
@@ -578,18 +544,18 @@ private fun OnboardingAccurateWeatherState(isDay: Boolean) {
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {
-        // Graphic Area (Padded container to ensure surrounding chips are never clipped)
+        // Graphic Area
         Box(
             modifier = Modifier
                 .fillMaxWidth()
-                .height(310.dp),
+                .height(290.dp),
             contentAlignment = Alignment.Center
         ) {
             if (dotLineResId != 0) {
                 Image(
                     painter = painterResource(id = dotLineResId),
                     contentDescription = "Orbital Dotted Line",
-                    modifier = Modifier.size(270.dp),
+                    modifier = Modifier.size(260.dp),
                     contentScale = ContentScale.Fit
                 )
             }
@@ -598,7 +564,7 @@ private fun OnboardingAccurateWeatherState(isDay: Boolean) {
                 Image(
                     painter = painterResource(id = mobileResId),
                     contentDescription = "Smartphone Weather App UI",
-                    modifier = Modifier.height(210.dp),
+                    modifier = Modifier.height(200.dp),
                     contentScale = ContentScale.Fit
                 )
             } else {
@@ -613,12 +579,12 @@ private fun OnboardingAccurateWeatherState(isDay: Boolean) {
                 Box(
                     modifier = Modifier
                         .align(Alignment.TopStart)
-                        .padding(start = 8.dp, top = 8.dp)
+                        .padding(start = 8.dp, top = 6.dp)
                 ) {
                     Image(
                         painter = painterResource(id = realTimeResId),
                         contentDescription = "Real-time Forecasts",
-                        modifier = Modifier.height(52.dp),
+                        modifier = Modifier.height(48.dp),
                         contentScale = ContentScale.Fit
                     )
                 }
@@ -629,12 +595,12 @@ private fun OnboardingAccurateWeatherState(isDay: Boolean) {
                 Box(
                     modifier = Modifier
                         .align(Alignment.TopEnd)
-                        .padding(end = 8.dp, top = 8.dp)
+                        .padding(end = 8.dp, top = 6.dp)
                 ) {
                     Image(
                         painter = painterResource(id = tempResId),
                         contentDescription = "Temperature",
-                        modifier = Modifier.height(52.dp),
+                        modifier = Modifier.height(48.dp),
                         contentScale = ContentScale.Fit
                     )
                 }
@@ -650,7 +616,7 @@ private fun OnboardingAccurateWeatherState(isDay: Boolean) {
                     Image(
                         painter = painterResource(id = windResId),
                         contentDescription = "Wind Speed",
-                        modifier = Modifier.height(52.dp),
+                        modifier = Modifier.height(48.dp),
                         contentScale = ContentScale.Fit
                     )
                 }
@@ -666,7 +632,7 @@ private fun OnboardingAccurateWeatherState(isDay: Boolean) {
                     Image(
                         painter = painterResource(id = aqResId),
                         contentDescription = "Air Quality",
-                        modifier = Modifier.height(52.dp),
+                        modifier = Modifier.height(48.dp),
                         contentScale = ContentScale.Fit
                     )
                 }
@@ -677,12 +643,12 @@ private fun OnboardingAccurateWeatherState(isDay: Boolean) {
                 Box(
                     modifier = Modifier
                         .align(Alignment.BottomEnd)
-                        .padding(end = 8.dp, bottom = 8.dp)
+                        .padding(end = 8.dp, bottom = 6.dp)
                 ) {
                     Image(
                         painter = painterResource(id = severeResId),
                         contentDescription = "Severe Weather Alerts",
-                        modifier = Modifier.height(52.dp),
+                        modifier = Modifier.height(48.dp),
                         contentScale = ContentScale.Fit
                     )
                 }
@@ -691,13 +657,13 @@ private fun OnboardingAccurateWeatherState(isDay: Boolean) {
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        // Titles & Subtitles with High-Contrast Navy Color
+        // Titles & Subtitles with High-Contrast Day/Night Adaptive Colors
         Text(
             text = buildAnnotatedString {
-                withStyle(style = SpanStyle(color = Color(0xFF0B2B52))) {
+                withStyle(style = SpanStyle(color = if (isDay) Color(0xFF0B2B52) else Color.White)) {
                     append("Get accurate\n")
                 }
-                withStyle(style = SpanStyle(color = Color(0xFF1D61E0))) {
+                withStyle(style = SpanStyle(color = if (isDay) Color(0xFF1D61E0) else Color(0xFF60A5FA))) {
                     append("weather")
                 }
             },
@@ -713,7 +679,7 @@ private fun OnboardingAccurateWeatherState(isDay: Boolean) {
             text = "Get real-time forecasts and\ntimely alerts, tailored to your location.",
             fontSize = 15.sp,
             fontWeight = FontWeight.Normal,
-            color = Color(0xFF4B637D),
+            color = if (isDay) Color(0xFF4B637D) else Color(0xFFE2E8F0),
             textAlign = TextAlign.Center,
             lineHeight = 22.sp
         )

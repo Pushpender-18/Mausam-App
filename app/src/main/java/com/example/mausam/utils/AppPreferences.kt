@@ -39,4 +39,14 @@ object AppPreferences {
     fun setOnboardingCompleted(context: Context, completed: Boolean) {
         getPrefs(context).edit().putBoolean(KEY_ONBOARDING_COMPLETED, completed).apply()
     }
+
+    private const val KEY_PERSONALIZED_CATEGORIES = "personalized_categories"
+
+    fun getPersonalizedCategories(context: Context): Set<String> {
+        return getPrefs(context).getStringSet(KEY_PERSONALIZED_CATEGORIES, emptySet()) ?: emptySet()
+    }
+
+    fun setPersonalizedCategories(context: Context, categories: Set<String>) {
+        getPrefs(context).edit().putStringSet(KEY_PERSONALIZED_CATEGORIES, categories).apply()
+    }
 }
